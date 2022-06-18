@@ -1,0 +1,12 @@
+[Desktop Entry]
+Name=VSCode Insiders - URL Handler
+Comment=Editing evolved
+GenericName=Code Editor
+Exec=/usr/bin/vscode-insiders --enable-features=UseOzonePlatform,WaylandWindowDecorations --ozone-platform=wayland --open-url %U
+Icon=vscode-insiders
+Type=Application
+NoDisplay=true
+StartupNotify=true
+Categories=Utility;TextEditor;Development;IDE;
+MimeType=x-scheme-handler/vscode;
+Keywords=vscode;code;code-insiders;vscode-insiders;
