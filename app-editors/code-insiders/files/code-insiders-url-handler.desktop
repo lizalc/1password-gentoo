@@ -1,5 +1,5 @@
 [Desktop Entry]
-Name=Code Insiders - URL Handler
+Name=Code - Insiders URL Handler
 Comment=Editing evolved
 GenericName=Code Editor
 Exec=/usr/bin/code-insiders --ozone-platform-hint=auto --open-url %U

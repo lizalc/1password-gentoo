@@ -5,11 +5,12 @@ EAPI=8
 
 inherit desktop pax-utils xdg
 
-MY_PR="${PR#r}"
+MY_URL_ID="35b971c92d210face8c446a1c6f1e470ad2bcb54"
+MY_PV="${PV##*.*.*.}"
 
 DESCRIPTION="Multiplatform Visual Studio Code from Microsoft - Insiders Edition"
 HOMEPAGE="https://code.visualstudio.com"
-SRC_URI="https://az764295.vo.msecnd.net/insider/9529e11f6481ae53bba821b05e34549491b9415e/code-insider-x64-${MY_PR}.tar.gz -> ${P}-amd64.tar.gz"
+SRC_URI="https://az764295.vo.msecnd.net/insider/${MY_URL_ID}/code-insider-x64-${MY_PV}.tar.gz -> ${P}-amd64.tar.gz"
 S="${WORKDIR}"
 
 RESTRICT="mirror strip bindist"
