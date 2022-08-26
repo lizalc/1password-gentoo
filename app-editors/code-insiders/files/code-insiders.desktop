@@ -1,0 +1,18 @@
+[Desktop Entry]
+Name=Code Insiders
+Comment=Editing evolved
+GenericName=Code Editor
+Exec=/usr/bin/code-insiders --ozone-platform-hint=auto --unity-launch %F
+Icon=code-insiders
+Type=Application
+StartupNotify=false
+StartupWMClass=Code
+Categories=Utility;TextEditor;Development;IDE;
+MimeType=text/plain;inode/directory;application/x-code-workspace;
+Actions=new-empty-window;
+Keywords=code;code-insiders;
+
+[Desktop Action new-empty-window]
+Name=New Empty Window
+Exec=/usr/bin/code-insiders --ozone-platform-hint=auto --new-window %F
+Icon=code-insiders

@@ -1,0 +1,12 @@
+[Desktop Entry]
+Name=Code Insiders - URL Handler
+Comment=Editing evolved
+GenericName=Code Editor
+Exec=/usr/bin/code-insiders --ozone-platform-hint=auto --open-url %U
+Icon=code-insiders
+Type=Application
+NoDisplay=true
+StartupNotify=true
+Categories=Utility;TextEditor;Development;IDE;
+MimeType=x-scheme-handler/code;
+Keywords=code;code-insiders;
