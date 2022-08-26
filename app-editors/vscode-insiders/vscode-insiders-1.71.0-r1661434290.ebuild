@@ -5,17 +5,13 @@ EAPI=8
 
 inherit desktop pax-utils xdg
 
+MY_PR="${PR#r}"
+
 DESCRIPTION="Multiplatform Visual Studio Code from Microsoft - Insiders Edition"
 HOMEPAGE="https://code.visualstudio.com"
-SRC_URI="
-	amd64? ( https://code.visualstudio.com/sha/download?build=insider&os=linux-x64 -> ${P}-amd64.tar.gz )
-	arm? ( https://code.visualstudio.com/sha/download?build=insider&os=linux-armhf -> ${P}-arm.tar.gz )
-	arm64? ( https://code.visualstudio.com/sha/download?build=insider&os=linux-arm64 -> ${P}-arm64.tar.gz )
-"
+SRC_URI="https://az764295.vo.msecnd.net/insider/9529e11f6481ae53bba821b05e34549491b9415e/code-insider-x64-${MY_PR}.tar.gz -> ${P}-amd64.tar.gz"
 S="${WORKDIR}"
 
-FEATURES="assume-digests digest"
-PROPERTIES="live"
 RESTRICT="mirror strip bindist"
 
 LICENSE="
@@ -38,6 +34,7 @@ LICENSE="
 	W3C
 "
 SLOT="0"
+KEYWORDS="-* ~amd64"
 
 RDEPEND="
 	app-accessibility/at-spi2-atk:2
@@ -86,12 +83,8 @@ QA_PREBUILT="
 src_install() {
 	if use amd64; then
 		cd "${WORKDIR}/VSCode-linux-x64" || die
-	elif use arm; then
-		cd "${WORKDIR}/VSCode-linux-armhf" || die
-	elif use arm64; then
-		cd "${WORKDIR}/VSCode-linux-arm64" || die
 	else
-		die "Visual Studio Code Insiders only supports amd64, arm and arm64"
+		die "Only amd64 is supported"
 	fi
 
 	# Cleanup
