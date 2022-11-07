@@ -3,24 +3,31 @@
 
 EAPI=8
 
-inherit gnome.org gnome2-utils meson vala xdg
-
-MY_PV="v${PV}"
-MY_P="${PN}-${MY_PV}"
+inherit gnome2-utils meson vala xdg
 
 DESCRIPTION="A beautiful GTK 4 terminal."
 HOMEPAGE="https://gitlab.gnome.org/raggesilver/blackbox"
-SRC_URI="https://gitlab.gnome.org/raggesilver/${PN}/-/archive/${MY_PV}/${MY_P}.tar.bz2"
+
+if [[ ${PV} == 9999 ]]; then
+	inherit git-r3
+	EGIT_REPO_URI="https://gitlab.gnome.org/raggesilver/${PN}.git"
+else
+	inherit gnome.org
+	MY_PV="v${PV}"
+	MY_P="${PN}-${MY_PV}"
+	SRC_URI="https://gitlab.gnome.org/raggesilver/${PN}/-/archive/${MY_PV}/${MY_P}.tar.bz2"
+	KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~riscv ~sparc ~x86"
+	S="${WORKDIR}/${MY_P}"
+fi
 
 LICENSE="GPL-3"
 SLOT="0"
-KEYWORDS="~amd64"
 
 DEPEND="
 	>=dev-libs/glib-2.50:2
 	>=gui-libs/gtk-4.6:4
 	>=gui-libs/libadwaita-1.1:1
-	~gui-libs/marble-9999
+	>=gui-libs/marble-42
 	>=gui-libs/vte-0.69.0:2.91-gtk4
 	>=dev-libs/json-glib-1.4.4
 	>=dev-libs/libpcre2-8
@@ -33,8 +40,6 @@ BDEPEND="
 	$(vala_depend)
 	virtual/pkgconfig
 "
-
-S="${WORKDIR}/${MY_P}"
 
 src_prepare() {
 	default
