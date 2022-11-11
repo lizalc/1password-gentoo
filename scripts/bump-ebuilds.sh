@@ -27,7 +27,7 @@ check_1password() {
 	log "Latest version" "$version"
 	log "Current ebuild" "$currentFile"
 
-	if [[ "$version" > "${currentFile%.*}" ]]; then
+	if [[ "$version" < "${currentFile%.*}" ]]; then
 		echo "New version available, bumping ebuild"
 		newEbuild="$ebuildDir/$version.ebuild"
 		cp -v "$current" "$newEbuild"
