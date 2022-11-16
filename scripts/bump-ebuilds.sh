@@ -30,7 +30,7 @@ check_1password() {
 	if [[ "$version" < "${currentFile%.*}" ]]; then
 		echo "New version available, bumping ebuild"
 		newEbuild="$ebuildDir/$version.ebuild"
-		cp -v "$current" "$newEbuild"
+		mv -v "$current" "$newEbuild"
 		ebuild "$newEbuild" manifest
 	else
 		echo "No new version available"
@@ -62,7 +62,7 @@ check_vscode() {
 		pkgBaseName="code-insiders-${curVersion}.${revisionPart}"
 
 		newEbuild="${ebuildDir}/${pkgBaseName}.ebuild"
-		cp -v "$current" "$newEbuild"
+		mv -v "$current" "$newEbuild"
 		sed -i "s/^MY_URL_ID=.*\$/MY_URL_ID=\"$urlPart\"/g" "$newEbuild"
 		ebuild "$newEbuild" manifest
 
