@@ -5,7 +5,7 @@ EAPI=8
 
 inherit desktop pax-utils xdg
 
-MY_URL_ID="544f1cab668d6e8125e25574bedfc23394ca9a82"
+MY_URL_ID="d9a70c4236a8bde4fe7435df3ecdd333c7bc939c"
 MY_PV="${PV##*.*.*.}"
 
 DESCRIPTION="Multiplatform Visual Studio Code from Microsoft - Insiders Edition"
