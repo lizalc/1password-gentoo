@@ -3,14 +3,16 @@
 
 EAPI=8
 
-inherit desktop pax-utils xdg
+inherit desktop pax-utils xdg optfeature
 
-MY_URL_ID="b92894493e6f971a3c71912d823e699d3a05d643"
+MY_URL_ID="f076d553210e9ea65e7bccbfa2f7a786c10fcab2"
 MY_PV="${PV##*.*.*.}"
 
 DESCRIPTION="Multiplatform Visual Studio Code from Microsoft - Insiders Edition"
 HOMEPAGE="https://code.visualstudio.com"
-SRC_URI="https://az764295.vo.msecnd.net/insider/${MY_URL_ID}/code-insider-x64-${MY_PV}.tar.gz -> ${P}-amd64.tar.gz"
+SRC_URI="
+	amd64? ( https://az764295.vo.msecnd.net/insider/${MY_URL_ID}/code-insider-x64-${MY_PV}.tar.gz -> ${P}-amd64.tar.gz )
+"
 S="${WORKDIR}"
 
 RESTRICT="mirror strip bindist"
@@ -38,16 +40,19 @@ SLOT="0"
 KEYWORDS="-* ~amd64"
 
 RDEPEND="
-	app-accessibility/at-spi2-atk:2
-	app-accessibility/at-spi2-core:2
+	|| (
+		>=app-accessibility/at-spi2-core-2.46.0:2
+		( app-accessibility/at-spi2-atk dev-libs/atk )
+	)
 	app-crypt/libsecret[crypt]
-	dev-libs/atk
 	dev-libs/expat
 	dev-libs/glib:2
 	dev-libs/nspr
 	dev-libs/nss
 	media-libs/alsa-lib
 	media-libs/mesa
+	net-print/cups
+	sys-apps/util-linux
 	sys-apps/dbus
 	x11-libs/cairo
 	x11-libs/gdk-pixbuf:2
@@ -67,49 +72,54 @@ RDEPEND="
 "
 
 QA_PREBUILT="
-	/opt/code-insiders/chrome_crashpad_handler
-	/opt/code-insiders/chrome-sandbox
-	/opt/code-insiders/code-insiders
-	/opt/code-insiders/libEGL.so
-	/opt/code-insiders/libffmpeg.so
-	/opt/code-insiders/libGLESv2.so
-	/opt/code-insiders/libvk_swiftshader.so
-	/opt/code-insiders/libvulkan.so*
-	/opt/code-insiders/resources/app/extensions/*
-	/opt/code-insiders/resources/app/node_modules.asar.unpacked/*
-	/opt/code-insiders/swiftshader/libEGL.so
-	/opt/code-insiders/swiftshader/libGLESv2.so
+	/opt/${PN}/bin/code-tunnel
+	/opt/${PN}/chrome_crashpad_handler
+	/opt/${PN}/chrome-sandbox
+	/opt/${PN}/code-insiders
+	/opt/${PN}/libEGL.so
+	/opt/${PN}/libffmpeg.so
+	/opt/${PN}/libGLESv2.so
+	/opt/${PN}/libvk_swiftshader.so
+	/opt/${PN}/libvulkan.so*
+	/opt/${PN}/resources/app/extensions/*
+	/opt/${PN}/resources/app/node_modules.asar.unpacked/*
+	/opt/${PN}/swiftshader/libEGL.so
+	/opt/${PN}/swiftshader/libGLESv2.so
 "
 
 src_install() {
 	if use amd64; then
 		cd "${WORKDIR}/VSCode-linux-x64" || die
 	else
-		die "Only amd64 is supported"
+		die "Visual Studio Code only supports amd64, arm and arm64"
 	fi
 
 	# Cleanup
 	rm -r ./resources/app/LICENSES.chromium.html ./resources/app/LICENSE.rtf || die
 
+	# Disable update server
+	sed -e "/updateUrl/d" -i ./resources/app/product.json || die
+
 	# Install
-	pax-mark m code-insiders
+	pax-mark m ${PN}
 	insinto "/opt/${PN}"
 	doins -r *
-	fperms +x /opt/${PN}/{,bin/}code-insiders
+	fperms +x /opt/${PN}/{,bin/}${PN}
 	fperms +x /opt/${PN}/chrome_crashpad_handler
 	fperms 4711 /opt/${PN}/chrome-sandbox
-	fperms 755 /opt/${PN}/resources/app/extensions/git/dist/askpass.sh
-	fperms 755 /opt/${PN}/resources/app/extensions/git/dist/askpass-empty.sh
+	fperms 755 /opt/${PN}/resources/app/extensions/git/dist/{askpass,git-editor}{,-empty}.sh
 	fperms -R +x /opt/${PN}/resources/app/out/vs/base/node
 	fperms +x /opt/${PN}/resources/app/node_modules.asar.unpacked/@vscode/ripgrep/bin/rg
-	dosym "../../opt/${PN}/bin/code-insiders" "usr/bin/code-insiders"
-	domenu "${FILESDIR}/code-insiders.desktop"
-	domenu "${FILESDIR}/code-insiders-url-handler.desktop"
-	newicon "resources/app/resources/linux/code.png" "code-insiders.png"
+	dosym "../../opt/${PN}/bin/${PN}" "usr/bin/vs${PN}"
+	dosym "../../opt/${PN}/bin/${PN}" "usr/bin/${PN}"
+	domenu "${FILESDIR}/${PN}.desktop"
+	domenu "${FILESDIR}/${PN}-url-handler.desktop"
+	newicon "resources/app/resources/linux/code.png" "${PN}.png"
 }
 
 pkg_postinst() {
 	xdg_pkg_postinst
 	elog "You may want to install some additional utils, check in:"
 	elog "https://code.visualstudio.com/Docs/setup#_additional-tools"
+	optfeature "keyring support inside vscode" "gnome-base/gnome-keyring"
 }
