@@ -105,7 +105,8 @@ src_prepare() {
 
 src_install() {
 	insinto "/etc/${PN}"
-	newins resources/custom_allowed_browsers custom_allowed_browsers.example
+	# Browser integration doesn't work if suid is disabled.
+	use suid && newins resources/custom_allowed_browsers custom_allowed_browsers.example
 	rm resources/custom_allowed_browsers || die
 
 	domenu resources/${PN}.desktop
@@ -124,7 +125,7 @@ src_install() {
 
 	local size
 	for size in 32 64 256 512; do
-		doicon -s ${size} ./resources/icons/hicolor/${size}x${size}/apps/${PN}.png
+		doicon -s ${size} "./resources/icons/hicolor/${size}x${size}/apps/${PN}.png"
 	done
 	unset size
 	rm -r ./resources/icons || die
@@ -141,31 +142,26 @@ src_install() {
 	fperms +x "/usr/share/${PN}/chrome_crashpad_handler"
 	fperms +x "/usr/share/${PN}/op-ssh-sign"
 
-	use suid && fperms 4755 "/usr/share/${PN}/chrome-sandbox"
-
 	fowners "0:onepassword" "/usr/share/${PN}/1Password-KeyringHelper"
-	# The binary requires setuid so it may interact with the Kernel keyring facilities
-	use suid && fperms 6755 "/usr/share/${PN}/1Password-KeyringHelper"
-
 	fowners "0:onepassword" "/usr/share/${PN}/1Password-BrowserSupport"
-	# For hardening against tampering
-	use suid && fperms 2755 "/usr/share/${PN}/1Password-BrowserSupport"
 }
 
 pkg_postinst() {
 	xdg_pkg_postinst
 
 	if use suid; then
-		if has sfperms ${FEATURES} && ! has suidctl ${FEATURES}; then
-			ewarn "FEATURES=sfperms removes the setuid/setguid read-bit for others from"
-			ewarn "  /usr/share/${PN}/chrome-sandbox"
-			ewarn "  /usr/share/${PN}/1Password-KeyringHelper"
-			ewarn "  /usr/share/${PN}/1Password-BrowserSupport"
-			ewarn "This prevents browser integration from working propery."
-			ewarn "Please remerge with FEATURES=suidctl set either by package.env"
-			ewarn "or globally in make.conf. /etc/portage/suidctl.conf can then be"
-			ewarn "edited to prevent the setuid/setguid read-bit stripping when re-merged."
-		fi
+		elog "Forcing setuid and setgid on installed executables:"
+		elog "  /usr/share/${PN}/chrome-sandbox"
+		elog "  /usr/share/${PN}/1Password-KeyringHelper"
+		elog "  /usr/share/${PN}/1Password-BrowserSupport"
+		elog "This is needed for interacting with the kernel keyring facilites and"
+		elog "for hardened / allowing browser integration."
+
+		chmod 4755 "/usr/share/${PN}/chrome-sandbox"
+		# The binary requires setuid so it may interact with the Kernel keyring facilities
+		chmod 6755 "/usr/share/${PN}/1Password-KeyringHelper"
+		# For hardening against tampering
+		chmod 2755 "/usr/share/${PN}/1Password-BrowserSupport"
 
 		elog
 		elog "Browser integration can be controlled via /etc/${PN}/custom_allowed_browsers."
@@ -190,7 +186,7 @@ pkg_postinst() {
 			fi
 		fi
 	else
-		ewarn "Installing without USE=suid breaks many 1password features such as browser"
-		ewarn "and system integration."
+		ewarn "Installing without USE=suid may prevent many 1password features such as browser"
+		ewarn "and system integration from working."
 	fi
 }
