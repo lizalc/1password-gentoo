@@ -9,7 +9,7 @@ CHROMIUM_LANGS="af am ar bg bn ca cs da de el en-GB es es-419 et fa fi fil fr gu
 
 inherit chromium-2 desktop optfeature pax-utils unpacker xdg
 
-MY_URL_ID="9ccc2b3b30c122afe45bc6722bef0e3901fb2806"
+MY_URL_ID="0615c4f98b07b51d3be6a357e22afec119490c5a"
 
 MY_PVR="${PV##*.*.*.}"
 MY_PV="${PV%.*}-${MY_PVR}"
@@ -18,7 +18,7 @@ MY_P="${PN}_${MY_PV}"
 DESCRIPTION="Multiplatform Visual Studio Code from Microsoft - Insiders Edition"
 HOMEPAGE="https://code.visualstudio.com"
 SRC_URI="
-	amd64? ( https://az764295.vo.msecnd.net/insider/${MY_URL_ID}/${MY_P}_amd64.deb )
+	amd64? ( https://vscode.blob.core.windows.net/insider/${MY_URL_ID}/${MY_P}_amd64.deb )
 "
 S="${WORKDIR}"
 
