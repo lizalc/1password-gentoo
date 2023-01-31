@@ -36,7 +36,7 @@ LICENSE="all-rights-reserved"
 SLOT="0"
 KEYWORDS="-* ~amd64 ~arm64"
 RESTRICT="bindist mirror splitdebug test"
-IUSE="appindicator homed policykit +suid wayland"
+IUSE="appindicator homed policykit +suid"
 CONFIG_PROTECT="/etc/${PN} /usr/share/polkit-1/actions"
 
 DEPEND="acct-group/onepassword"
@@ -86,12 +86,7 @@ src_prepare() {
 	popd > /dev/null || die
 
 	sed -i "s|opt/1Password|usr/share/${PN}|g" "resources/${PN}.desktop" || die
-
-	if use wayland; then
-		cp ./resources/${PN}.desktop ./resources/${PN}-wayland.desktop || die
-		sed -i 's/Name=.*/\0 Wayland/g' ./resources/${PN}-wayland.desktop || die
-		sed -i 's/Exec=.*/\0 --enable-features=WaylandWindowDecorations --ozone-platform-hint=auto/g' ./resources/${PN}-wayland.desktop || die
-	fi
+	sed -i 's/Exec=.*/\0 --enable-features=WaylandWindowDecorations --ozone-platform-hint=auto/g' ./resources/${PN}.desktop || die
 
 	if use policykit; then
 		use homed && ewarn "systemd-homed users will not be automatically added to polkit policy"
@@ -111,11 +106,6 @@ src_install() {
 
 	domenu resources/${PN}.desktop
 	rm resources/${PN}.desktop || die
-
-	if use wayland; then
-		domenu resources/${PN}-wayland.desktop || die
-		rm resources/${PN}-wayland.desktop || die
-	fi
 
 	if use policykit; then
 		insinto "/usr/share/polkit-1/actions"
