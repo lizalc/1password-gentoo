@@ -24,7 +24,6 @@ S="${WORKDIR}"
 
 SLOT="0"
 KEYWORDS="-* ~amd64"
-IUSE="wayland"
 RESTRICT="mirror bindist"
 
 LICENSE="
@@ -97,16 +96,8 @@ src_install() {
 	# Appdata location is deprecated. This fixes QA warning.
 	mv usr/share/appdata usr/share/metainfo || die
 
-	if use wayland; then
-		cp usr/share/applications/code-insiders.desktop usr/share/applications/code-insiders-wayland.desktop || die
-		cp usr/share/applications/code-insiders-url-handler.desktop usr/share/applications/code-insiders-url-handler-wayland.desktop || die
-
-		sed -i 's/Name=.*/\0 Wayland/g' usr/share/applications/code-insiders-wayland.desktop || die
-		sed -i 's/Name=.*/\0 Wayland/g' usr/share/applications/code-insiders-url-handler-wayland.desktop || die
-
-		sed -i 's/Exec=.*/\0 --enable-features=WaylandWindowDecorations --ozone-platform-hint=auto/g' usr/share/applications/code-insiders-wayland.desktop || die
-		sed -i 's/Exec=.*/\0 --enable-features=WaylandWindowDecorations --ozone-platform-hint=auto/g' usr/share/applications/code-insiders-url-handler-wayland.desktop || die
-	fi
+	sed -i 's/Exec=.*/\0 --enable-features=WaylandWindowDecorations --ozone-platform-hint=auto/g' usr/share/applications/code-insiders.desktop || die
+	sed -i 's/Exec=.*/\0 --enable-features=WaylandWindowDecorations --ozone-platform-hint=auto/g' usr/share/applications/code-insiders-url-handler.desktop || die
 
 	local CODE_INSIDERS_HOME="usr/share/${PN}"
 
