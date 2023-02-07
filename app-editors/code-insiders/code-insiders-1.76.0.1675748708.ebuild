@@ -9,7 +9,7 @@ CHROMIUM_LANGS="af am ar bg bn ca cs da de el en-GB es es-419 et fa fi fil fr gu
 
 inherit chromium-2 desktop optfeature pax-utils unpacker xdg
 
-MY_URL_ID="c9e3ef865539061b5602c6b9ac6030332aa1ce70"
+MY_URL_ID="25514d899f4bd877803defb213719f8af3d997d3"
 
 MY_PVR="${PV##*.*.*.}"
 MY_PV="${PV%.*}-${MY_PVR}"
